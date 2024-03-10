@@ -156,3 +156,38 @@ def Your_Order(request):
         'order':order,
     }
     return render(request,'order.html',context)
+
+def Product_page(request):
+    category = Category.objects.all()
+    brand = Brand.objects.all()
+    brandID = request.GET.get('brand')
+    categoryID = request.GET.get('category')
+
+    if categoryID:
+        product = Product.objects.filter(sub_category=categoryID).order_by('-id')
+    elif brandID:
+        product = Product.objects.filter(brand=brandID).order_by('-id')
+    else:
+        product = Product.objects.all()
+
+    context = {
+        'category': category,
+        'product': product,
+        'brand': brand,
+    }
+    return render(request,'product.html',context)
+
+def Product_Detail(request,id):
+    product = Product.objects.filter(id = id).first()
+    context = {
+        'product':product
+    }
+    return render(request,'product_detail.html',context)
+
+def Search(request):
+    query = request.GET['query']
+    product = Product.objects.filter(name__icontains = query)
+    context = {
+        'product':product,
+    }
+    return render(request,'search.html',context)
